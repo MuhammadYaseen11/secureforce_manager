@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../screens/staff_list_screen.dart';
 
 class MyHomePage extends StatelessWidget {
   const MyHomePage({super.key});
@@ -18,7 +19,15 @@ class MyHomePage extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              ElevatedButton(onPressed: () {}, child: Text('View Staff')),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => StaffListScreen()),
+                  );
+                },
+                child: Text('View Staff'),
+              ),
               ElevatedButton(onPressed: () {}, child: Text('Assign Shift')),
               ElevatedButton(onPressed: () {}, child: Text('Generate Report')),
             ],

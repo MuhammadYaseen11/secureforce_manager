@@ -1,0 +1,38 @@
+[
+    {
+      "id": 1,
+      "name": "John Doe",
+      "role": "Security Guard",
+      "availability": "Available"
+    },
+    {
+      "id": 2,
+      "name": "Jane Smith",
+      "role": "Supervisor",
+      "availability": "On Leave"
+    },
+    {
+      "id": 3,
+      "name": "David Brown",
+      "role": "Security Guard",
+      "availability": "Assigned"
+    },
+    {
+      "id": 4,
+      "name": "Aslam Zeb",
+      "role": "Security Guard",
+      "availability": "Available"
+    },
+    {
+      "id": 5,
+      "name": "Jacob Smith",
+      "role": "Security Guard",
+      "availability": "Available"
+    },
+    {
+      "id": 6,
+      "name": "Sarah Johnson",
+      "role": "Security Guard",
+      "availability": "Available"
+    }
+]
