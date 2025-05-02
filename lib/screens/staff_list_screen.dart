@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../models/staff.dart';
 
 Future<dynamic> readJson() async {
   final String response = await rootBundle.loadString(
@@ -25,18 +26,20 @@ class DummyStaffPage extends StatelessWidget {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else {
             // return Center(child: Text(snapshot.data.toString()));
-            final staffList = snapshot.data!;
+            //final staffList = snapshot.data!;
+            final staffList =
+                (snapshot.data as List<dynamic>)
+                    .map((json) => Staff.fromJson(json))
+                    .toList();
             return ListView.builder(
               itemCount: staffList.length,
               itemBuilder: (context, index) {
                 final staff = staffList[index];
-                final name = staff['name'];
-                final role = staff['role'];
-                final availability = staff['availability'];
-
                 return ListTile(
-                  title: Text(name),
-                  subtitle: Text('Role: $role\nAvailability: $availability'),
+                  title: Text(staff.name),
+                  subtitle: Text(
+                    'Role: ${staff.role}\nAvailability: ${staff.availability}',
+                  ),
                 );
               },
             );
