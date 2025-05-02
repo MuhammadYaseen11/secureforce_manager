@@ -10,6 +10,7 @@ class Staff {
     required this.role,
     required this.availability,
   });
+
   factory Staff.fromJson(Map<String, dynamic> json) {
     return Staff(
       id: json['id'],
@@ -17,5 +18,9 @@ class Staff {
       role: json['role'],
       availability: json['availability'],
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {'id': id, 'name': name, 'role': role, 'availability': availability};
   }
 }
