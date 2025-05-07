@@ -27,5 +27,5 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-  assets:
-    - assets\data\dummy_staff.json
+  # assets:
+  #   - assets\data\dummy_staff.json # Asset loading is currently disabled as it is not required for this project.
