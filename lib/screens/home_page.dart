@@ -3,11 +3,69 @@ import '../screens/staff_list_screen.dart';
 import '../screens/assign_shift_screen.dart';
 import 'generate_report_screen.dart';
 
-class MyHomePage extends StatelessWidget {
+class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
 
   @override
+  State<MyHomePage> createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  List<Map<String, String>> staffList = [];
+  List<String> notifications = [];
+  String? nextShift;
+
+  void _navigateToStaffScreen() async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => StaffListScreen(existingStaff: staffList),
+      ),
+    );
+
+    if (result != null && result is List<Map<String, String>>) {
+      setState(() {
+        staffList = result;
+        notifications.insert(
+          0,
+          'Staff updated. Total staff: ${staffList.length}',
+        );
+      });
+    }
+  }
+
+  void _navigateToAssignShiftScreen() async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AssignShiftScreen(staffList: staffList),
+      ),
+    );
+
+    if (result != null && result is String) {
+      setState(() {
+        nextShift = result;
+        notifications.insert(0, 'New shift assigned: $nextShift');
+      });
+    }
+  }
+
+  void _navigateToReportScreen() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => GenerateReportScreen(staffData: staffList),
+      ),
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final totalStaff = staffList.length.toString();
+    final recentNotification =
+        notifications.isNotEmpty ? notifications.first : 'No updates yet';
+    final displayShift = nextShift ?? 'No upcoming shift assigned.';
+
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
@@ -24,60 +82,36 @@ class MyHomePage extends StatelessWidget {
               style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 30),
-
-            // Action Buttons
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 _buildActionCard(
                   icon: Icons.people,
                   label: 'View Staff',
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const StaffListScreen(),
-                      ),
-                    );
-                  },
+                  onTap: _navigateToStaffScreen,
                 ),
                 _buildActionCard(
                   icon: Icons.assignment,
                   label: 'Assign Shift',
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const AssignShiftScreen(),
-                      ),
-                    );
-                  },
+                  onTap: _navigateToAssignShiftScreen,
                 ),
                 _buildActionCard(
                   icon: Icons.bar_chart,
                   label: 'Report',
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const GenerateReportScreen(),
-                      ),
-                    );
-                  },
+                  onTap: _navigateToReportScreen,
                 ),
               ],
             ),
-
             const SizedBox(height: 40),
             const _SectionHeader(title: 'Staff Overview'),
             const SizedBox(height: 20),
-            _buildInfoCard('Total Staff', '25'),
+            _buildInfoCard('Total Staff', totalStaff),
             const SizedBox(height: 20),
             const _SectionHeader(title: 'Upcoming Shifts'),
-            _buildInfoCard('Next Shift', 'Mon, 10:00 AM - 6:00 PM'),
+            _buildInfoCard('Next Shift', displayShift),
             const SizedBox(height: 20),
             const _SectionHeader(title: 'Notifications'),
-            _buildInfoCard('Recent', 'Shift updated for John Doe.'),
+            _buildInfoCard('Recent', recentNotification),
           ],
         ),
       ),

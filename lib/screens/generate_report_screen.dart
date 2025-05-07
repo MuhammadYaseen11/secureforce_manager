@@ -1,68 +1,33 @@
 import 'package:flutter/material.dart';
 
 class GenerateReportScreen extends StatelessWidget {
-  const GenerateReportScreen({super.key});
+  final List<Map<String, String>> staffData;
 
-  void _generateReport(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Report generated successfully!'),
-        backgroundColor: Colors.green,
-      ),
-    );
-  }
+  const GenerateReportScreen({super.key, required this.staffData});
 
   @override
   Widget build(BuildContext context) {
-    final mockReport = '''
-- Total Staff: 3
-- Shifts Assigned: 5
-- Last Shift: Robert King | 10:00 AM - 6:00 PM | Mon
-- Pending Notifications: 2
-''';
-
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Generate Report'),
+        title: const Text('Staff Report'),
         backgroundColor: Colors.deepOrange,
       ),
       body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Report Preview',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 20),
-            Expanded(
-              child: Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.grey[100],
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.deepOrange),
-                ),
-                child: Text(mockReport, style: const TextStyle(fontSize: 16)),
-              ),
-            ),
-            const SizedBox(height: 30),
-            Center(
-              child: ElevatedButton.icon(
-                onPressed: () => _generateReport(context),
-                icon: const Icon(Icons.picture_as_pdf),
-                label: const Text('Generate PDF'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.deepOrange,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 30,
-                    vertical: 15,
-                  ),
+        padding: const EdgeInsets.all(16),
+        child: ListView.builder(
+          itemCount: staffData.length,
+          itemBuilder: (_, index) {
+            final staff = staffData[index];
+            return Card(
+              margin: const EdgeInsets.symmetric(vertical: 8),
+              child: ListTile(
+                title: Text(staff['name'] ?? 'Unnamed'),
+                subtitle: Text(
+                  'Role: ${staff['role']} | Availability: ${staff['availability']}',
                 ),
               ),
-            ),
-          ],
+            );
+          },
         ),
       ),
     );

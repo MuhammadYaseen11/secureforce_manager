@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 
 class AssignShiftScreen extends StatefulWidget {
-  const AssignShiftScreen({super.key});
+  final List<Map<String, String>> staffList;
+
+  const AssignShiftScreen({super.key, required this.staffList});
 
   @override
   State<AssignShiftScreen> createState() => _AssignShiftScreenState();
 }
 
 class _AssignShiftScreenState extends State<AssignShiftScreen> {
-  final List<String> _staffList = ['John Doe', 'Alice Smith', 'Robert King'];
   String? _selectedStaff;
   TimeOfDay? _startTime;
   TimeOfDay? _endTime;
@@ -31,17 +32,30 @@ class _AssignShiftScreenState extends State<AssignShiftScreen> {
 
   void _assignShift() {
     if (_selectedStaff != null && _startTime != null && _endTime != null) {
+      // Optional: validate that end time is after start time
+      final startMinutes = _startTime!.hour * 60 + _startTime!.minute;
+      final endMinutes = _endTime!.hour * 60 + _endTime!.minute;
+      if (endMinutes <= startMinutes) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('End time must be after start time'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+
+      final assignedShift =
+          '$_selectedStaff: ${_startTime!.format(context)} - ${_endTime!.format(context)}';
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Shift assigned to $_selectedStaff'),
           backgroundColor: Colors.green,
         ),
       );
-      setState(() {
-        _selectedStaff = null;
-        _startTime = null;
-        _endTime = null;
-      });
+
+      Navigator.pop(context, assignedShift);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -54,6 +68,9 @@ class _AssignShiftScreenState extends State<AssignShiftScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final names =
+        widget.staffList.map((e) => e['name']).whereType<String>().toList();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Assign Shift'),
@@ -66,7 +83,7 @@ class _AssignShiftScreenState extends State<AssignShiftScreen> {
             DropdownButtonFormField<String>(
               value: _selectedStaff,
               items:
-                  _staffList
+                  names
                       .map(
                         (name) =>
                             DropdownMenuItem(value: name, child: Text(name)),

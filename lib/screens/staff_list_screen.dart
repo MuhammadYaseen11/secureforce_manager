@@ -1,52 +1,91 @@
 import 'package:flutter/material.dart';
 
 class StaffListScreen extends StatefulWidget {
-  const StaffListScreen({super.key});
+  final List<Map<String, String>> existingStaff;
+
+  const StaffListScreen({super.key, required this.existingStaff});
 
   @override
   State<StaffListScreen> createState() => _StaffListScreenState();
 }
 
 class _StaffListScreenState extends State<StaffListScreen> {
-  final List<String> _staffMembers = ['John Doe', 'Alice Smith', 'Robert King'];
+  late List<Map<String, String>> staffList;
 
-  void _addStaffMember(String name) {
-    setState(() {
-      _staffMembers.add(name);
-    });
+  final _roles = ['Guard', 'CCTV-Guard', 'Manager', 'Inspector'];
+  final _availabilityOptions = ['Yes-Available', 'Shift Assigned', 'On Leave'];
+
+  @override
+  void initState() {
+    super.initState();
+    staffList = List.from(widget.existingStaff);
   }
 
-  void _showAddStaffDialog() {
-    String newName = '';
+  void _addStaff() {
+    String name = '';
+    String role = _roles.first;
+    String availability = _availabilityOptions.first;
+
     showDialog(
       context: context,
-      builder:
-          (context) => AlertDialog(
-            title: const Text('Add New Staff'),
-            content: TextField(
-              autofocus: true,
-              decoration: const InputDecoration(labelText: 'Full Name'),
-              onChanged: (value) {
-                newName = value;
-              },
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('Cancel'),
+      builder: (_) {
+        return AlertDialog(
+          title: const Text('Add Staff'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                decoration: const InputDecoration(labelText: 'Name'),
+                onChanged: (val) => name = val,
               ),
-              ElevatedButton(
-                onPressed: () {
-                  if (newName.trim().isNotEmpty) {
-                    _addStaffMember(newName.trim());
-                    Navigator.pop(context);
-                  }
-                },
-                child: const Text('Add'),
+              DropdownButtonFormField<String>(
+                value: role,
+                items:
+                    _roles
+                        .map((r) => DropdownMenuItem(value: r, child: Text(r)))
+                        .toList(),
+                onChanged: (val) => role = val!,
+                decoration: const InputDecoration(labelText: 'Role'),
+              ),
+              DropdownButtonFormField<String>(
+                value: availability,
+                items:
+                    _availabilityOptions
+                        .map((a) => DropdownMenuItem(value: a, child: Text(a)))
+                        .toList(),
+                onChanged: (val) => availability = val!,
+                decoration: const InputDecoration(labelText: 'Availability'),
               ),
             ],
           ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                if (name.isNotEmpty) {
+                  setState(() {
+                    staffList.add({
+                      'name': name,
+                      'role': role,
+                      'availability': availability,
+                    });
+                  });
+                  Navigator.pop(context);
+                }
+              },
+              child: const Text('Add'),
+            ),
+          ],
+        );
+      },
     );
+  }
+
+  void _saveAndReturn() {
+    Navigator.pop(context, staffList);
   }
 
   @override
@@ -56,48 +95,23 @@ class _StaffListScreenState extends State<StaffListScreen> {
         title: const Text('Staff List'),
         backgroundColor: Colors.deepOrange,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: _showAddStaffDialog,
-            tooltip: 'Add Staff',
-          ),
+          IconButton(icon: const Icon(Icons.add), onPressed: _addStaff),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child:
-            _staffMembers.isEmpty
-                ? const Center(child: Text('No staff members added yet.'))
-                : ListView.builder(
-                  itemCount: _staffMembers.length,
-                  itemBuilder: (context, index) {
-                    return Card(
-                      margin: const EdgeInsets.symmetric(vertical: 8),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: ListTile(
-                        leading: CircleAvatar(
-                          backgroundColor: Colors.deepOrange,
-                          foregroundColor: Colors.white,
-                          child: Text(_staffMembers[index][0]),
-                        ),
-                        title: Text(_staffMembers[index]),
-                        trailing: IconButton(
-                          icon: const Icon(
-                            Icons.delete,
-                            color: Colors.redAccent,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              _staffMembers.removeAt(index);
-                            });
-                          },
-                        ),
-                      ),
-                    );
-                  },
-                ),
+      body: ListView.builder(
+        itemCount: staffList.length,
+        itemBuilder: (_, index) {
+          final staff = staffList[index];
+          return ListTile(
+            title: Text(staff['name'] ?? ''),
+            subtitle: Text('${staff['role']} | ${staff['availability']}'),
+          );
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.deepOrange,
+        onPressed: _saveAndReturn,
+        child: const Icon(Icons.save),
       ),
     );
   }
