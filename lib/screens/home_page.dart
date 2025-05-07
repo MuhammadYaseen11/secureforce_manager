@@ -74,45 +74,71 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Welcome, [Employer Name]',
-              style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 30),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final isLargeScreen =
+                constraints.maxWidth > 600; // Tablets & larger screens
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildActionCard(
-                  icon: Icons.people,
-                  label: 'View Staff',
-                  onTap: _navigateToStaffScreen,
+                const Text(
+                  'Welcome, [Employer Name]',
+                  style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
                 ),
-                _buildActionCard(
-                  icon: Icons.assignment,
-                  label: 'Assign Shift',
-                  onTap: _navigateToAssignShiftScreen,
-                ),
-                _buildActionCard(
-                  icon: Icons.bar_chart,
-                  label: 'Report',
-                  onTap: _navigateToReportScreen,
-                ),
+                const SizedBox(height: 30),
+                isLargeScreen
+                    ? Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        _buildActionCard(
+                          icon: Icons.people,
+                          label: 'View Staff',
+                          onTap: _navigateToStaffScreen,
+                        ),
+                        _buildActionCard(
+                          icon: Icons.assignment,
+                          label: 'Assign Shift',
+                          onTap: _navigateToAssignShiftScreen,
+                        ),
+                        _buildActionCard(
+                          icon: Icons.bar_chart,
+                          label: 'Report',
+                          onTap: _navigateToReportScreen,
+                        ),
+                      ],
+                    )
+                    : Column(
+                      children: [
+                        _buildActionCard(
+                          icon: Icons.people,
+                          label: 'View Staff',
+                          onTap: _navigateToStaffScreen,
+                        ),
+                        _buildActionCard(
+                          icon: Icons.assignment,
+                          label: 'Assign Shift',
+                          onTap: _navigateToAssignShiftScreen,
+                        ),
+                        _buildActionCard(
+                          icon: Icons.bar_chart,
+                          label: 'Report',
+                          onTap: _navigateToReportScreen,
+                        ),
+                      ],
+                    ),
+                const SizedBox(height: 40),
+                const _SectionHeader(title: 'Staff Overview'),
+                const SizedBox(height: 20),
+                _buildInfoCard('Total Staff', totalStaff),
+                const SizedBox(height: 20),
+                const _SectionHeader(title: 'Upcoming Shifts'),
+                _buildInfoCard('Next Shift', displayShift),
+                const SizedBox(height: 20),
+                const _SectionHeader(title: 'Notifications'),
+                _buildInfoCard('Recent', recentNotification),
               ],
-            ),
-            const SizedBox(height: 40),
-            const _SectionHeader(title: 'Staff Overview'),
-            const SizedBox(height: 20),
-            _buildInfoCard('Total Staff', totalStaff),
-            const SizedBox(height: 20),
-            const _SectionHeader(title: 'Upcoming Shifts'),
-            _buildInfoCard('Next Shift', displayShift),
-            const SizedBox(height: 20),
-            const _SectionHeader(title: 'Notifications'),
-            _buildInfoCard('Recent', recentNotification),
-          ],
+            );
+          },
         ),
       ),
     );

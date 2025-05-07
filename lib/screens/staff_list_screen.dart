@@ -92,6 +92,7 @@ class _StaffListScreenState extends State<StaffListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        actionsPadding: const EdgeInsets.only(right: 20),
         title: const Text('Staff List'),
         backgroundColor: Colors.deepOrange,
         actions: [
